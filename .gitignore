@@ -13,6 +13,8 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# OS
+# OS / 本地杂项
 Thumbs.db
 .DS_Store
+__MACOSX/
+anaconda_projects/
