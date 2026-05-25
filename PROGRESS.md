@@ -9,7 +9,7 @@
 
 ## 阶段 0 · 环境与 Python
 
-- [ ] `pytorch/chapter_installation/` 环境安装完成
+- [x] `pytorch/chapter_installation/` 环境安装完成
 - [x] 能 `import torch` 并运行脚本
 - [ ] Python 薄弱点清单写完（见 `深度学习初步.md` 中标注）
 
