@@ -8,18 +8,20 @@ import d2l.torch as d2l
 '''
 # 生成数据集
 def synthetic_data(w,b,num_examples):
-    X = torch.normal(0,1,(num_examples,len(w)))
-    y = torch.matmul(X,w) + b
-    y += torch.normal(0,0.01,y.shape)
+    X = torch.normal(0,1,(num_examples,len(w)))       #从均值为0、标准差为1的正态分布中随机采样
+    y = torch.matmul(X,w) + b                 #matmul是矩阵乘法
+    y += torch.normal(0,0.01,y.shape)         #在标签上添加噪声，噪声的形状与y相同，均值为0，标准差为0.01
     return X,y.reshape((-1,1))
 
+#设定真实的权重和偏差
 true_w = torch.tensor([2,-3.4])
 true_b = 4.2
+
 features,labels = synthetic_data(true_w,true_b,1000)
 
 print('features:',features[0],"\nlabel:",labels[0])
 d2l.set_figsize()
-d2l.plt.scatter(features[:,(1)].detach().numpy(),labels.detach().numpy(),1)
+d2l.plt.scatter(features[:,(1)].detach().numpy(),labels.detach().numpy(),1)  #以第二权重对应的特征为横坐标，标签为纵坐标，绘制散点图，点的大小为1
 d2l.plt.show()
 
 # 读取数据
@@ -31,9 +33,11 @@ def data_iter(batch_size,features,labels):
         batch_indices = torch.tensor(indices[i:min(i+batch_size,num_examples)])
         yield features[batch_indices],labels[batch_indices]
 
+
 # 初始化模型参数
 w = torch.normal(0,0.001,size=(2,1),requires_grad=True)
 b = torch.zeros(1,requires_grad=True)
+
 
 # 定义模型
 def linreg(X,w,b):
@@ -46,7 +50,7 @@ def squared_loss(y_hat,y):
 # 定义优化算法
 '''小批量随机梯度下降'''
 def sgd(params,lr,batch_size):
-    with torch.no_grad():
+    with torch.no_grad():   #不需要计算梯度，所以可以防止发生梯度更新
         for param in params:
             param -= lr*param.grad/batch_size
             param.grad.zero_()
