@@ -60,12 +60,14 @@ batch_size = 10
 
 for epoch in range(num_epochs):
     for X,y in data_iter(batch_size,features,labels):
-        l = loss(net(X,w,b),y)
+        l = loss(net(X,w,b),y) #X和y的小批量损失
+        #因为l形状是(batch_size,1)，使用mean()来得到这个小批量的平均损失
+        #计算[w,b]的梯度
         l.sum().backward()
-        sgd([w,b],lr,batch_size)
+        sgd([w,b],lr,batch_size)  #更新参数
     with torch.no_grad():
         train_l = loss(net(features,w,b),labels)
         print(f'epoch {epoch + 1}, loss {float(train_l.mean()):f}')
 
-
-
+print(f'w的估计误差: {true_w - w.reshape(true_w.shape)}')
+print(f'b的估计误差: {true_b - b}')
