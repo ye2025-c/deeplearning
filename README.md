@@ -1,183 +1,209 @@
-# 深度学习 · 编程训练学习框架
+# 深度学习自学仓库
 
-本仓库是你的**个人深度学习训练场**：理论笔记、动手练习、教材跟练、从零实现，分层放在不同目录里，避免混在一起。
-
----
-
-## 学习原则（沿用你的笔记）
-
-1. **数学够用即可**：线性代数、微积分、概率遇到再补，不要卡在预备知识上。
-2. **以框架和代码为主**：PyTorch + 《动手学深度学习》为主线；`learning_process/` 做小实验巩固。
-3. **先跟练再手写**：D2L notebook 跑通 → `learning_process/` 简化复现 → `transformer/` 等大项目从零写。
-4. **每学完一章就记一笔**：更新 [`PROGRESS.md`](PROGRESS.md) 里的勾选框。
+> 个人深度学习学习记录：理论笔记 + 代码练手 + 项目实现，按阶段分层管理。
+>
+> **当前阶段**：阶段 1（预备知识 + 线性模型）& 阶段 5（Transformer 项目并行）→ 详见 [PROGRESS.md](PROGRESS.md)
 
 ---
 
-## 目录地图
+## 目录结构
 
 ```
 deeplearning/
-├── README.md                 ← 本文件：总框架与路线
-├── PROGRESS.md               ← 学习进度勾选表
-├── learning_process/         ← 阶段 0~2：小脚本、数学与基础算法练手
-├── deeplearning notebook/    ← 阶段 0~3：个人 Markdown 笔记（按 DL-章节 命名）
-├── pytorch/                  ← 阶段 1~4：《动手学深度学习》PyTorch 版全套 notebook
-├── transformer/              ← 阶段 5：从零实现 Transformer（进阶项目）
-└── .vscode/                  ← 编辑器配置
+├── README.md                   # 总路线图（本文件）
+├── PROGRESS.md                 # 逐章勾选进度表
+│
+├── deeplearning notebook/      # 个人 Markdown 笔记（按章节命名）
+│   ├── 深度学习初步.md
+│   └── 线性神经网络.md
+│
+├── learning_process/           # 独立 .py 小实验（验证概念用）
+│   ├── calculus.py
+│   ├── 正态分布.py
+│   ├── 矢量加速.py
+│   ├── 线性回归实例.py
+│   └── Timer.py
+│
+├── transformer/                # 阶段 5：从零实现 Transformer
+│   └── transformer.py
+│
+└── (待建)
+    ├── pytorch/                # D2L 教材配套 notebook（跟练用）
+    ├── projects/               # 独立课题（MNIST / 情感分类 / 微调 BERT 等）
+    └── data/                   # 自建数据集（D2L 数据由 d2l 自动下载）
 ```
-
-| 目录 | 用途 | 何时用 |
-|------|------|--------|
-| `learning_process/` | 独立 `.py` 小实验（计时、微积分、线性回归等） | 想快速验证一个概念、不打开 notebook 时 |
-| `deeplearning notebook/` | 自己的总结、公式推导、踩坑记录 | 每学完 D2L 一章或做完一个实验后 |
-| `pytorch/` | 官方教材跟练，**不要改原 notebook 结构** | 系统跟书；用副本或新 cell 做练习 |
-| `transformer/` | 完整模型实现 + 训练脚本 | 学完 RNN/注意力后再深入 |
-
-**建议后续可增目录（需要时再建）：**
-
-- `projects/` — 小课题（MNIST、情感分类、微调 BERT 等）
-- `data/` — 自建数据集（教材数据一般由 d2l 自动下载）
 
 ---
 
 ## 学习路线（五阶段）
 
-### 阶段 0 · 环境与 Python（约 1 周）
+### 总览
 
-**目标**：能跑通 PyTorch，会看报错、会用 `help` / `dir`。
-
-| 任务 | 材料 | 产出 |
-|------|------|------|
-| 安装 Python、PyTorch、d2l | `pytorch/chapter_installation/` | 环境可 `import torch` |
-| Python 基础查漏补缺 | 外部教程 / 你笔记里标红的部分 | 笔记一条「已掌握列表」 |
-| 第一个 tensor 实验 | `pytorch/chapter_preliminaries/ndarray.ipynb` | `PROGRESS.md` 勾选 |
-
-**你已完成的部分**：`deeplearning notebook/深度学习初步.md`（自动微分、概率等）；`learning_process/calculus.py` 等。
-
----
-
-### 阶段 1 · 预备知识 + 线性模型（约 2~3 周）
-
-**目标**：理解张量、自动求导、线性回归 / softmax；能自己写训练循环。
-
-| 顺序 | D2L 章节 (`pytorch/`) | 配套练手 | 笔记 |
-|------|------------------------|----------|------|
-| 1 | `chapter_preliminaries/`（线性代数、微积分、概率、autograd） | `learning_process/calculus.py` | `深度学习初步.md` ✓ |
-| 2 | `chapter_linear-networks/` | `learning_process/线性回归实例.py` | `线性神经网络.md` ✓ |
-| 3 | `chapter_optimization/`（SGD、动量等） | 自写：换学习率对比实验 | 新建 `优化算法.md` |
-
-**阶段过关标准**：不看答案能写出「合成数据 → DataLoader → 训练 10 epoch → 打印 loss」。
+| 阶段 | 主题 | 预计时长 | 状态 |
+|------|------|----------|------|
+| 0 | 环境与 Python 基础 | 1 周 | ✅ 完成 |
+| 1 | 预备知识 + 线性模型 + 优化 | 2~3 周 | 🔄 进行中 |
+| 2 | 多层感知机与正则化 | 2 周 | ⬜ 待开始 |
+| 3 | 卷积神经网络与计算机视觉 | 3~4 周 | ⬜ 待开始 |
+| 4 | 序列模型、注意力与 NLP | 3~4 周 | ⬜ 待开始 |
+| 5 | 从零实现大模型（Transformer） | 持续推进 | 🔄 训练已跑通 |
 
 ---
 
-### 阶段 2 · 多层感知机与正则（约 2 周）
+### 阶段 0 · 环境与 Python（✅ 已完成）
 
-| 顺序 | D2L 章节 | 练手建议 |
-|------|----------|----------|
-| 1 | `chapter_multilayer-perceptrons/` | 在 `learning_process/` 加 `mlp_scratch.py` |
-| 2 | 同上（dropout、权重衰减） | 记录过拟合 vs 验证 loss 曲线 |
+**过关标准**：能 `import torch` 运行脚本，会看报错。
+
+- [x] Python 3.10+、PyTorch、d2l 安装完成
+- [x] 第一个 tensor 实验跑通
 
 ---
 
-### 阶段 3 · 卷积与计算机视觉（约 3~4 周）
+### 阶段 1 · 预备知识 + 线性模型（🔄 进行中）
 
-| 顺序 | D2L 章节 | 说明 |
+**过关标准**：不看答案能独立写出「合成数据 → DataLoader → 训练循环 → 打印 loss」。
+
+#### 预备知识 `pytorch/chapter_preliminaries/`
+
+| 任务 | 配套练手 | 笔记 |
 |------|----------|------|
-| 1 | `chapter_convolutional-neural-networks/` | LeNet、卷积、池化 |
-| 2 | `chapter_convolutional-modern/` | ResNet、BatchNorm 等 |
-| 3 | `chapter_computer-vision/` | 检测、分割等选读 |
+| 张量操作 `ndarray.ipynb` | — | — |
+| pandas 数据处理 | — | — |
+| 线性代数 | — | `深度学习初步.md` |
+| 微积分 `calculus.ipynb` | `learning_process/calculus.py` ✓ | `深度学习初步.md` ✓ |
+| 概率 `probability.ipynb` | `learning_process/正态分布.py` ✓ | — |
+| 自动微分 `autograd.ipynb` | — | `深度学习初步.md` ✓ |
 
-**练手**：`learning_process/矢量加速.py` 可对照 `chapter_computational-performance/` 阅读。
+#### 线性模型 `pytorch/chapter_linear-networks/`
+
+| 任务 | 配套练手 | 笔记 |
+|------|----------|------|
+| 线性回归原理 | `learning_process/线性回归实例.py` ✓ | `线性神经网络.md` ✓ |
+| 线性回归从零实现 | — | — |
+| 线性回归简洁实现 | — | — |
+| Softmax 回归 | 新建 `learning_process/softmax_scratch.py` | 补充 `线性神经网络.md` |
+
+#### 优化基础 `pytorch/chapter_optimization/`
+
+| 任务 | 建议 |
+|------|------|
+| SGD / 动量 / Adam | 实验：同数据集换优化器对比 loss 曲线 |
+| 新建笔记 `优化算法.md` | 记录超参影响规律 |
 
 ---
 
-### 阶段 4 · 序列模型与 NLP（约 3~4 周）
+### 阶段 2 · 多层感知机与正则化（⬜ 待开始）
 
-| 顺序 | D2L 章节 |
-|------|----------|
-| 1 | `chapter_recurrent-neural-networks/` |
-| 2 | `chapter_recurrent-modern/`（LSTM、GRU、seq2seq） |
-| 3 | `chapter_attention-mechanisms/` |
-| 4 | `chapter_natural-language-processing-*`（选读） |
+**过关标准**：能解释过拟合原因，会用 Dropout / 权重衰减控制验证 loss。
 
-**阶段过关标准**：能口头说清 RNN 梯度问题、Attention 在算什么。
+| D2L 章节 | 练手目标 |
+|----------|----------|
+| `chapter_multilayer-perceptrons/` | `learning_process/mlp_scratch.py`：从零实现 MLP |
+| 同上（Dropout、权重衰减） | 画出「训练 vs 验证 loss」对比图 |
+| `chapter_deep-learning-computation/` | 理解模型参数初始化、层与块 |
 
 ---
 
-### 阶段 5 · 从零实现大模型（进行中）
+### 阶段 3 · 卷积神经网络与计算机视觉（⬜ 待开始）
 
-| 项目 | 路径 | 状态 |
+**过关标准**：能口头解释卷积、池化的作用，能复现 LeNet / ResNet 基本结构。
+
+| D2L 章节 | 关键内容 |
+|----------|----------|
+| `chapter_convolutional-neural-networks/` | 卷积、填充、池化、LeNet |
+| `chapter_convolutional-modern/` | BatchNorm、ResNet、DenseNet |
+| `chapter_computer-vision/`（选读） | 迁移学习、目标检测（按兴趣选章） |
+
+**练手建议**：`learning_process/` 增加 `lenet_scratch.py`，用 Fashion-MNIST 跑通。
+
+---
+
+### 阶段 4 · 序列模型、注意力与 NLP（⬜ 待开始）
+
+**过关标准**：能口头说清 RNN 梯度问题、Attention 在计算什么、为什么 Transformer 能并行。
+
+| D2L 章节 | 关键内容 |
+|----------|----------|
+| `chapter_recurrent-neural-networks/` | RNN、BPTT、语言模型 |
+| `chapter_recurrent-modern/` | LSTM、GRU、seq2seq、束搜索 |
+| `chapter_attention-mechanisms/` | Bahdanau、多头注意力、位置编码 |
+| `chapter_natural-language-processing-*`（选读） | BERT 微调等 |
+
+> 完成本阶段后，`transformer/` 的实现会有更深理解，可回头补齐 mask、BLEU 评估。
+
+---
+
+### 阶段 5 · 从零实现 Transformer（🔄 持续推进）
+
+**当前进度**：`transformer/transformer.py` 训练循环已跑通。
+
+**下一步（按优先级）**：
+
+1. **因果掩码**：补 `src_mask` / `tgt_mask`，防止解码器看到未来 token
+2. **配置解耦**：超参数抽到 `transformer/config.py` 或命令行参数
+3. **评估指标**：加 BLEU score 评估翻译质量
+4. **Checkpoint**：训练中途保存/恢复模型权重
+5. **笔记**：新建 `deeplearning notebook/Transformer实现.md`，记录架构设计和踩坑
+
+**后续扩展方向**（完成上述再考虑）：
+
+- 用 Hugging Face Transformers 微调预训练模型（对比从零实现）
+- 实现 GPT-style 语言模型（纯 Decoder 架构）
+- 实现 BERT 预训练 + 下游任务微调
+
+---
+
+## 文件命名约定
+
+| 类型 | 格式 | 示例 |
 |------|------|------|
-| Transformer 中英翻译 demo | `transformer/transformer.py` | 已能训练；可补 mask、BLEU、保存 checkpoint |
+| 个人笔记 | `deeplearning notebook/{主题}.md` | `优化算法.md` |
+| 练手脚本 | `learning_process/{序号}_{主题}.py` | `03_mlp_scratch.py` |
+| 独立项目 | `projects/{名称}/train.py` | `projects/sentiment/train.py` |
 
-**下一步建议**：
-
-1. 给训练加 `src_mask` / `tgt_mask`（因果掩码）
-2. 把超参抽到 `config.py` 或命令行
-3. 笔记：`deeplearning notebook/Transformer实现.md`
+> 笔记里统一用「问题 + 原因 + 改法」格式记录踩坑，便于复盘。
 
 ---
 
-## 每周节奏（可执行模板）
+## 每周节奏
 
-| 天 | 内容 | 时间参考 |
-|----|------|----------|
-| 一、三 | 跟 D2L 1~2 个 notebook，**必须自己敲一遍** | 1.5~2h |
-| 二 | `learning_process/` 小脚本复现核心公式 | 1h |
-| 四 | 写/补 `deeplearning notebook/` 笔记 | 0.5~1h |
-| 五 | 复习本周 loss 曲线、改一个超参做对比 | 1h |
-| 六 | 可选：读论文节选 / 看 `transformer/` | 1~2h |
-| 日 | 休息或只勾 `PROGRESS.md` | — |
-
----
-
-## 文件命名约定（新建内容时）
-
-- **笔记**：`deeplearning notebook/DL-{阶段}-{月日}-{主题}.md`（与你现有 `DL-1-3-29` 一致）
-- **练手脚本**：`learning_process/{序号}_{主题}.py`，例如 `03_mlp_scratch.py`
-- **项目**：`projects/{名称}/`，内含 `train.py`、`README.md`
+| 天 | 内容 | 时间 |
+|----|------|------|
+| 周一、三 | 跟 D2L notebook，自己敲一遍 | 1.5~2h |
+| 周二 | `learning_process/` 小脚本复现核心公式 | 1h |
+| 周四 | 写/补 `deeplearning notebook/` 笔记 | 1h |
+| 周五 | 改一个超参做对比实验，观察 loss 曲线变化 | 1h |
+| 周六 | 推进 `transformer/` 项目或读论文 | 1~2h |
+| 周日 | 休息 / 仅更新 `PROGRESS.md` | — |
 
 ---
 
-## 环境
+## 环境与运行
 
-```powershell
-# 建议 Python 3.10+，已安装 PyTorch 时使用：
-cd e:\HuaweiMoveData\Users\shen\Desktop\deeplearning
+```bash
+# 验证环境
 python -c "import torch; print(torch.__version__)"
 
 # 运行 Transformer 训练
-python transformer\transformer.py
+python transformer/transformer.py
 
-# 运行线性回归练手（需已安装 d2l）
-python learning_process\线性回归实例.py
+# 运行线性回归练手
+python learning_process/线性回归实例.py
 ```
 
-依赖：`torch`、`d2l`（跟 D2L 书）、`matplotlib`。GPU 可选，CPU 也能完成前期章节。
+**依赖**：`torch`、`d2l`、`matplotlib`
+GPU 可选，CPU 完成阶段 0~2 没有问题。
 
 ---
 
-## 当前进度快照（2026-05）
+## 遇到问题的处理顺序
 
-| 模块 | 状态 |
-|------|------|
-| 预备知识笔记 | 进行中（`深度学习初步.md`） |
-| 线性模型笔记 + 线性回归脚本 | 已开始 |
-| D2L 全书 notebook | 已克隆，按 `PROGRESS.md` 逐章勾选 |
-| Transformer 从零实现 | 进行中，训练已跑通 |
-
-详细勾选见 **[`PROGRESS.md`](PROGRESS.md)**。
-
----
-
-## 遇到问题时的顺序
-
-1. 看终端完整 traceback（你已在 `transformer` 上练过）
-2. `help(函数名)` 或 Jupyter `?函数名`
-3. 查对应 D2L 章节 notebook
+1. 读完整 traceback，定位到具体文件和行号
+2. `help(函数名)` 或 Jupyter `?函数名` 查文档
+3. 查对应 D2L 章节的 notebook
 4. 在 `deeplearning notebook/` 记一条「问题 + 原因 + 改法」
-5. 仍不懂再开新对话，附上文件路径和报错
+5. 仍不懂再提问，附上文件路径 + 报错内容
 
 ---
 
-*框架会随你进度更新；每完成一个阶段可在 `PROGRESS.md` 顶部改「当前阶段」一行。*
+*每完成一个阶段，在 `PROGRESS.md` 顶部更新「当前阶段」一行；README 中对应状态从 ⬜ 改为 🔄 或 ✅。*
