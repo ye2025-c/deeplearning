@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>线性回归数据流程可视化</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #0f1117; color: #e2e8f0; }
+
+  h1 { text-align: center; padding: 32px 0 8px; font-size: 1.8rem; color: #7dd3fc; letter-spacing: 2px; }
+  .subtitle { text-align: center; color: #94a3b8; margin-bottom: 40px; font-size: 0.95rem; }
+
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ── 每个阶段卡片 ── */
+  .stage {
+    background: #1e2333;
+    border: 1px solid #2d3a55;
+    border-radius: 14px;
+    padding: 28px 32px;
+    position: relative;
+  }
+  .stage-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .stage-icon {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .stage-title { font-size: 1.15rem; font-weight: 700; }
+  .stage-code {
+    background: #0d1117;
+    border: 1px solid #2d3a55;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.82rem;
+    color: #a5f3fc;
+    line-height: 1.7;
+    margin-bottom: 14px;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .comment { color: #64748b; }
+  .kw      { color: #f472b6; }
+  .fn      { color: #818cf8; }
+  .num     { color: #fb923c; }
+  .str     { color: #86efac; }
+
+  /* ── 数据展示表格 ── */
+  .data-section { margin-top: 14px; }
+  .data-label { font-size: 0.78rem; color: #7dd3fc; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  th {
+    background: #1a2744;
+    color: #7dd3fc;
+    padding: 7px 12px;
+    text-align: center;
+    border: 1px solid #2d3a55;
+  }
+  td {
+    padding: 6px 12px;
+    text-align: center;
+    border: 1px solid #2d3a55;
+    font-family: 'Cascadia Code', monospace;
+  }
+  tr:nth-child(even) td { background: #151c2e; }
+  tr:nth-child(odd) td  { background: #1a2030; }
+  .highlight td { background: #1e3a5f !important; color: #7dd3fc; font-weight: bold; }
+
+  /* ── 说明文字 ── */
+  .explain {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .explain-item {
+    background: #131929;
+    border-left: 3px solid #3b82f6;
+    padding: 10px 14px;
+    border-radius: 4px;
+    flex: 1;
+    min-width: 220px;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+  }
+  .explain-item strong { color: #7dd3fc; }
+
+  /* ── 连接箭头 ── */
+  .arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    position: relative;
+  }
+  .arrow::before {
+    content: '';
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+    position: absolute;
+  }
+  .arrow-head {
+    position: absolute;
+    bottom: 0;
+    width: 0; height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 12px solid #8b5cf6;
+  }
+  .arrow-label {
+    position: absolute;
+    left: calc(50% + 16px);
+    font-size: 0.75rem;
+    color: #8b5cf6;
+    white-space: nowrap;
+  }
+
+  /* ── 损失曲线 ── */
+  .loss-bars { display: flex; align-items: flex-end; gap: 8px; height: 80px; margin-top: 12px; }
+  .loss-bar { flex: 1; border-radius: 4px 4px 0 0; position: relative; transition: height 0.5s; }
+  .loss-bar span {
+    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    font-size: 0.7rem; color: #f472b6; white-space: nowrap;
+  }
+
+  /* ── 颜色主题 ── */
+  .s1 .stage-icon { background: #1e3a5f; color: #7dd3fc; }
+  .s1 .stage-title { color: #7dd3fc; }
+  .s2 .stage-icon { background: #2d1f4a; color: #c084fc; }
+  .s2 .stage-title { color: #c084fc; }
+  .s3 .stage-icon { background: #1f3a2d; color: #6ee7b7; }
+  .s3 .stage-title { color: #6ee7b7; }
+  .s4 .stage-icon { background: #3a2d1f; color: #fb923c; }
+  .s4 .stage-title { color: #fb923c; }
+  .s5 .stage-icon { background: #3a1f2d; color: #f472b6; }
+  .s5 .stage-title { color: #f472b6; }
+  .s6 .stage-icon { background: #2d3a1f; color: #a3e635; }
+  .s6 .stage-title { color: #a3e635; }
+
+  .formula {
+    display: inline-block;
+    background: #0d1117;
+    border: 1px solid #3b82f6;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-family: 'Cascadia Code', monospace;
+    font-size: 0.9rem;
+    color: #fcd34d;
+    margin: 6px 4px;
+  }
+  .grad-box {
+    background: #1a1f2e;
+    border: 1px solid #f472b6;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 10px;
+    font-size: 0.84rem;
+    color: #fda4af;
+    line-height: 1.8;
+  }
+  .result-box {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px;
+  }
+  .result-card {
+    background: #0f2d1a;
+    border: 1px solid #6ee7b7;
+    border-radius: 8px;
+    padding: 14px 20px;
+    flex: 1; min-width: 160px;
+    text-align: center;
+  }
+  .result-card .val { font-size: 1.4rem; font-weight: bold; color: #6ee7b7; font-family: monospace; }
+  .result-card .key { font-size: 0.75rem; color: #64748b; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<h1>线性回归 — 数据流程全解析</h1>
+<p class="subtitle">真实参数 w = [2, −3.4]，b = 4.2 &nbsp;|&nbsp; 1000个样本 &nbsp;|&nbsp; 3 epochs</p>
+
+<div class="pipeline">
+
+  <!-- ══════════════════ STAGE 1 ══════════════════ -->
+  <div class="stage s1">
+    <div class="stage-header">
+      <div class="stage-icon">①</div>
+      <div>
+        <div class="stage-title">生成合成数据集</div>
+        <div style="color:#64748b;font-size:0.82rem">synthetic_data(w, b, num_examples)</div>
+      </div>
+    </div>
+
+    <div class="stage-code"><span class="comment"># 真实参数（目标，模型不知道）</span>
+true_w = torch.tensor([<span class="num">2</span>, <span class="num">-3.4</span>])
+true_b = <span class="num">4.2</span>
+
+<span class="comment"># Step1: 从标准正态分布采样特征矩阵 X ∈ R^(1000×2)</span>
+X = torch.<span class="fn">normal</span>(<span class="num">0</span>, <span class="num">1</span>, (<span class="num">1000</span>, <span class="num">2</span>))
+
+<span class="comment"># Step2: 线性组合生成标签</span>
+y = X @ true_w + true_b
+
+<span class="comment"># Step3: 加入噪声（模拟真实世界的测量误差）</span>
+y += torch.<span class="fn">normal</span>(<span class="num">0</span>, <span class="num">0.01</span>, y.shape)</div>
+
+    <div class="data-section">
+      <div class="data-label">示例数据（前5行）</div>
+      <table>
+        <tr><th>样本</th><th>x₁</th><th>x₂</th><th>y（含噪声）</th><th>y（无噪声）</th></tr>
+        <tr class="highlight"><td>#0</td><td>0.8522</td><td>-0.6112</td><td>7.1263</td><td>7.1258 ≈ 2×0.85 + (−3.4)×(−0.61) + 4.2</td></tr>
+        <tr><td>#1</td><td>-1.2034</td><td>0.4471</td><td>0.5882</td><td>0.5877</td></tr>
+        <tr><td>#2</td><td>0.3317</td><td>-1.5892</td><td>10.2685</td><td>10.2680</td></tr>
+        <tr><td>#3</td><td>-0.0821</td><td>0.7823</td><td>1.5320</td><td>1.5316</td></tr>
+        <tr><td>#4</td><td>1.6745</td><td>-0.2310</td><td>8.3203</td><td>8.3198</td></tr>
+      </table>
+    </div>
+
+    <div class="explain">
+      <div class="explain-item">
+        <strong>公式</strong><br>
+        <span class="formula">y = X·w + b + ε</span><br>
+        ε ~ N(0, 0.01²) 是噪声项
+      </div>
+      <div class="explain-item">
+        <strong>为什么加噪声？</strong><br>
+        真实数据永远有测量误差。噪声让模型学到泛化能力，而不是死记标签。
+      </div>
+      <div class="explain-item">
+        <strong>数据形状</strong><br>
+        features: <strong style="color:#7dd3fc">(1000, 2)</strong><br>
+        labels: <strong style="color:#7dd3fc">(1000, 1)</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-head"></div><div class="arrow-label">打乱 + 切批</div></div>
+
+  <!-- ══════════════════ STAGE 2 ══════════════════ -->
+  <div class="stage s2">
+    <div class="stage-header">
+      <div class="stage-icon">②</div>
+      <div>
+        <div class="stage-title">小批量数据迭代</div>
+        <div style="color:#64748b;font-size:0.82rem">data_iter(batch_size=10, features, labels)</div>
+      </div>
+    </div>
+
+    <div class="stage-code"><span class="comment"># 随机打乱索引，再按 batch_size 切片</span>
+indices = <span class="fn">list</span>(<span class="fn">range</span>(<span class="num">1000</span>))   <span class="comment"># [0,1,2,...,999]</span>
+random.<span class="fn">shuffle</span>(indices)         <span class="comment"># [473,21,856,...] 随机顺序</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="num">1000</span>, <span class="num">10</span>):   <span class="comment"># 每次取10个</span>
+    batch_idx = indices[i:i+<span class="num">10</span>]
+    <span class="kw">yield</span> features[batch_idx], labels[batch_idx]</div>
+
+    <div class="data-section">
+      <div class="data-label">第1个 mini-batch（batch_size=10）</div>
+      <table>
+        <tr><th>批次样本</th><th>原始索引</th><th>x₁</th><th>x₂</th><th>y</th></tr>
+        <tr><td>0</td><td>#473</td><td>-0.5211</td><td>1.2034</td><td>-0.8742</td></tr>
+        <tr><td>1</td><td>#21</td><td>1.1023</td><td>-0.8891</td><td>9.2134</td></tr>
+        <tr><td>2</td><td>#856</td><td>0.2134</td><td>0.5521</td><td>2.4523</td></tr>
+        <tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+        <tr><td>9</td><td>#312</td><td>-1.3421</td><td>0.7823</td><td>-0.4521</td></tr>
+      </table>
+    </div>
+
+    <div class="explain">
+      <div class="explain-item">
+        <strong>为什么要 shuffle？</strong><br>
+        避免模型学到数据顺序的规律。每个 epoch 重新打乱，让训练更随机。
+      </div>
+      <div class="explain-item">
+        <strong>Mini-batch 的意义</strong><br>
+        1000个样本 / 10 = <strong style="color:#c084fc">100次</strong> 参数更新/epoch<br>
+        全批太慢，单样本噪声太大，小批量折中。
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-head"></div><div class="arrow-label">初始化参数</div></div>
+
+  <!-- ══════════════════ STAGE 3 ══════════════════ -->
+  <div class="stage s3">
+    <div class="stage-header">
+      <div class="stage-icon">③</div>
+      <div>
+        <div class="stage-title">初始化模型参数 & 前向传播</div>
+        <div style="color:#64748b;font-size:0.82rem">linreg(X, w, b)</div>
+      </div>
+    </div>
+
+    <div class="stage-code"><span class="comment"># 初始化为接近0的随机值（requires_grad=True 开启自动微分）</span>
+w = torch.<span class="fn">normal</span>(<span class="num">0</span>, <span class="num">0.001</span>, size=(<span class="num">2</span>,<span class="num">1</span>), requires_grad=<span class="kw">True</span>)
+<span class="comment"># 初始 w ≈ [[0.0007], [-0.0003]]</span>
+b = torch.<span class="fn">zeros</span>(<span class="num">1</span>, requires_grad=<span class="kw">True</span>)
+<span class="comment"># 初始 b = [0.0]</span>
+
+<span class="comment"># 前向传播：对当前batch的10个样本做预测</span>
+<span class="kw">def</span> <span class="fn">linreg</span>(X, w, b):
+    <span class="kw">return</span> torch.<span class="fn">matmul</span>(X, w) + b   <span class="comment"># (10,2) @ (2,1) + (1,) → (10,1)</span></div>
+
+    <div class="data-section">
+      <div class="data-label">前向传播计算过程（第1个batch，第1个样本）</div>
+      <table>
+        <tr><th>步骤</th><th>数值</th><th>说明</th></tr>
+        <tr><td>输入 x</td><td>[−0.5211, 1.2034]</td><td>特征向量</td></tr>
+        <tr><td>初始 w</td><td>[[0.0007], [−0.0003]]</td><td>随机初始化</td></tr>
+        <tr><td>初始 b</td><td>[0.0]</td><td>零初始化</td></tr>
+        <tr class="highlight"><td>ŷ = Xw+b</td><td>−0.5211×0.0007 + 1.2034×(−0.0003) + 0 = <strong>−0.000725</strong></td><td>预测值（很差）</td></tr>
+        <tr><td>真实 y</td><td>−0.8742</td><td>标签</td></tr>
+      </table>
+    </div>
+
+    <div class="explain">
+      <div class="explain-item">
+        <strong>第1次预测为什么这么差？</strong><br>
+        因为 w 初始化为接近 0，b=0，所有预测都约等于 0。损失很大，但梯度信号也很强，这正是训练开始的起点。
+      </div>
+      <div class="explain-item">
+        <strong>矩阵维度</strong><br>
+        X: (10,2) &nbsp;×&nbsp; w: (2,1) &nbsp;=&nbsp; (10,1)<br>
+        每次得到10个预测值，与labels(10,1)对比。
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-head"></div><div class="arrow-label">计算损失</div></div>
+
+  <!-- ══════════════════ STAGE 4 ══════════════════ -->
+  <div class="stage s4">
+    <div class="stage-header">
+      <div class="stage-icon">④</div>
+      <div>
+        <div class="stage-title">计算损失函数</div>
+        <div style="color:#64748b;font-size:0.82rem">squared_loss(ŷ, y)</div>
+      </div>
+    </div>
+
+    <div class="stage-code"><span class="kw">def</span> <span class="fn">squared_loss</span>(y_hat, y):
+    <span class="kw">return</span> (y_hat - y.<span class="fn">reshape</span>(y_hat.shape))**<span class="num">2</span> / <span class="num">2</span>
+
+<span class="comment"># 对batch内所有损失求和，然后反向传播</span>
+l = <span class="fn">squared_loss</span>(<span class="fn">linreg</span>(X, w, b), y)  <span class="comment"># 形状 (10,1)</span>
+l.<span class="fn">sum</span>().<span class="fn">backward</span>()                       <span class="comment"># 自动计算梯度</span></div>
+
+    <div class="data-section">
+      <div class="data-label">第1个 batch 各样本损失（epoch1，iteration1）</div>
+      <table>
+        <tr><th>样本</th><th>真实 y</th><th>预测 ŷ（初始）</th><th>差值 ŷ−y</th><th>损失 (ŷ−y)²/2</th></tr>
+        <tr><td>#0</td><td>−0.8742</td><td>−0.000725</td><td>0.8735</td><td><strong>0.3813</strong></td></tr>
+        <tr><td>#1</td><td>9.2134</td><td>0.000774</td><td>−9.2126</td><td><strong>42.436</strong></td></tr>
+        <tr><td>#2</td><td>2.4523</td><td>0.000322</td><td>−2.4520</td><td><strong>3.006</strong></td></tr>
+        <tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+        <tr class="highlight"><td>总和</td><td>—</td><td>—</td><td>—</td><td>≈ <strong>243.7</strong>（极大）</td></tr>
+      </table>
+    </div>
+
+    <div class="explain">
+      <div class="explain-item">
+        <strong>为什么除以 2？</strong><br>
+        纯粹是数学上的方便：对 (ŷ−y)² 求导会出现系数 2，除以 2 后导数正好是 (ŷ−y)，公式更整洁。
+      </div>
+      <div class="explain-item">
+        <strong>l.sum().backward()</strong><br>
+        对所有10个损失求和再反向传播，PyTorch 自动计算 ∂L/∂w 和 ∂L/∂b，结果存入 w.grad 和 b.grad。
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-head"></div><div class="arrow-label">反向传播 + 更新</div></div>
+
+  <!-- ══════════════════ STAGE 5 ══════════════════ -->
+  <div class="stage s5">
+    <div class="stage-header">
+      <div class="stage-icon">⑤</div>
+      <div>
+        <div class="stage-title">梯度下降更新参数</div>
+        <div style="color:#64748b;font-size:0.82rem">sgd([w, b], lr=0.03, batch_size=10)</div>
+      </div>
+    </div>
+
+    <div class="stage-code"><span class="kw">def</span> <span class="fn">sgd</span>(params, lr, batch_size):
+    <span class="kw">with</span> torch.no_grad():
+        <span class="kw">for</span> param <span class="kw">in</span> params:
+            param -= lr * param.grad / batch_size   <span class="comment"># 梯度除以batch_size取平均</span>
+            param.grad.<span class="fn">zero_</span>()                    <span class="comment"># 清零梯度，防止累加</span></div>
+
+    <div class="grad-box">
+      <strong style="color:#f472b6">第1次参数更新（数值示例）</strong><br><br>
+      更新前 w = [[0.0007], [−0.0003]]，b = [0.0]<br><br>
+      设 w.grad ≈ [−14.52, 18.73]，b.grad ≈ −7.81<br><br>
+      <span class="formula">w -= 0.03 × (−14.52) / 10 = w + 0.04356</span><br>
+      <span class="formula">b -= 0.03 × (−7.81) / 10  = b + 0.02343</span><br><br>
+      更新后 w ≈ [[0.0443], [−0.0593]]，b ≈ [0.0234]<br>
+      <span style="color:#64748b;font-size:0.8rem">（仅1次迭代，w 已向真实值 [2, −3.4] 方向移动）</span>
+    </div>
+
+    <div class="explain">
+      <div class="explain-item">
+        <strong>为什么要除以 batch_size？</strong><br>
+        我们用了 l.sum() 而不是 l.mean()，所以梯度是 batch 内所有样本梯度之和。除以 batch_size 换算成平均梯度，使学习率 lr 的含义不随 batch 大小变化。
+      </div>
+      <div class="explain-item">
+        <strong>为什么要 zero_() 清零？</strong><br>
+        PyTorch 默认累加梯度（多次 backward 梯度叠加）。每次迭代开始前必须清零，否则梯度会越来越大导致训练崩溃。
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-head"></div><div class="arrow-label">重复100次/epoch × 3 epochs</div></div>
+
+  <!-- ══════════════════ STAGE 6 ══════════════════ -->
+  <div class="stage s6">
+    <div class="stage-header">
+      <div class="stage-icon">⑥</div>
+      <div>
+        <div class="stage-title">训练结果</div>
+        <div style="color:#64748b;font-size:0.82rem">3 epochs × 100 iterations = 300次参数更新</div>
+      </div>
+    </div>
+
+    <div class="stage-code"><span class="comment"># 每个 epoch 结束后在全量数据上评估损失</span>
+<span class="kw">with</span> torch.no_grad():
+    train_l = <span class="fn">loss</span>(<span class="fn">net</span>(features, w, b), labels)
+    <span class="fn">print</span>(<span class="str">f'epoch {epoch+1}, loss {train_l.mean():f}'</span>)
+
+<span class="comment"># 典型输出</span>
+<span class="comment"># epoch 1, loss 0.040132</span>
+<span class="comment"># epoch 2, loss 0.000165</span>
+<span class="comment"># epoch 3, loss 0.000051</span></div>
+
+    <div class="data-section">
+      <div class="data-label">损失收敛过程</div>
+      <div style="display:flex;align-items:flex-end;gap:0;margin-top:10px;">
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;margin-right:12px;font-size:0.72rem;color:#64748b;padding-bottom:4px;">
+          <span>init</span><span>e1</span><span>e2</span><span>e3</span>
+        </div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div style="width:243px;height:18px;background:linear-gradient(to right,#f472b6,#f472b680);border-radius:3px;"></div>
+            <span style="font-size:0.78rem;color:#f472b6">loss ≈ 243.7（初始，w≈0）</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div style="width:80px;height:18px;background:linear-gradient(to right,#fb923c,#fb923c80);border-radius:3px;"></div>
+            <span style="font-size:0.78rem;color:#fb923c">loss ≈ 0.0401</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div style="width:20px;height:18px;background:linear-gradient(to right,#facc15,#facc1580);border-radius:3px;"></div>
+            <span style="font-size:0.78rem;color:#facc15">loss ≈ 0.000165</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:6px;height:18px;background:linear-gradient(to right,#a3e635,#a3e63580);border-radius:3px;"></div>
+            <span style="font-size:0.78rem;color:#a3e635">loss ≈ 0.0000505 ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-box">
+      <div class="result-card">
+        <div class="val">w₁: 1.9997</div>
+        <div class="key">真实值: 2.0000</div>
+        <div style="color:#6ee7b7;font-size:0.75rem;margin-top:4px;">误差 ≈ 0.0003</div>
+      </div>
+      <div class="result-card">
+        <div class="val">w₂: −3.3997</div>
+        <div class="key">真实值: −3.4000</div>
+        <div style="color:#6ee7b7;font-size:0.75rem;margin-top:4px;">误差 ≈ 0.0003</div>
+      </div>
+      <div class="result-card">
+        <div class="val">b: 4.1998</div>
+        <div class="key">真实值: 4.2000</div>
+        <div style="color:#6ee7b7;font-size:0.75rem;margin-top:4px;">误差 ≈ 0.0002</div>
+      </div>
+    </div>
+
+    <div class="explain" style="margin-top:16px">
+      <div class="explain-item">
+        <strong>为什么没有完全收敛到0误差？</strong><br>
+        数据生成时加了 N(0, 0.01²) 的噪声，模型无法拟合噪声项，最终损失下界约为 0.01²/2 ≈ 0.00005，这正是我们看到的收敛值。
+      </div>
+      <div class="explain-item">
+        <strong>仅3个 epoch 就收敛的原因</strong><br>
+        这是精心设计的线性问题，lr=0.03 恰当，数据量足够。真实深度学习问题通常需要数十到数百 epoch。
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 底部总结 -->
+<div style="max-width:960px;margin:0 auto 60px;padding:0 24px;">
+  <div style="background:#1e2333;border:1px solid #2d3a55;border-radius:14px;padding:28px 32px;">
+    <div style="font-size:1.05rem;font-weight:700;color:#7dd3fc;margin-bottom:16px;">完整数据流总结</div>
+    <div style="display:flex;gap:0;overflow-x:auto;">
+      <div style="text-align:center;padding:12px 16px;background:#0d1117;border-radius:8px;min-width:100px;flex-shrink:0">
+        <div style="font-size:1.4rem">📦</div>
+        <div style="font-size:0.72rem;color:#7dd3fc;margin-top:6px">原始数据<br/>(1000,2)</div>
+      </div>
+      <div style="display:flex;align-items:center;color:#3b82f6;font-size:1.2rem;padding:0 6px">→</div>
+      <div style="text-align:center;padding:12px 16px;background:#0d1117;border-radius:8px;min-width:100px;flex-shrink:0">
+        <div style="font-size:1.4rem">🔀</div>
+        <div style="font-size:0.72rem;color:#c084fc;margin-top:6px">shuffle<br/>切批(10)</div>
+      </div>
+      <div style="display:flex;align-items:center;color:#3b82f6;font-size:1.2rem;padding:0 6px">→</div>
+      <div style="text-align:center;padding:12px 16px;background:#0d1117;border-radius:8px;min-width:100px;flex-shrink:0">
+        <div style="font-size:1.4rem">🧮</div>
+        <div style="font-size:0.72rem;color:#6ee7b7;margin-top:6px">前向传播<br/>ŷ=Xw+b</div>
+      </div>
+      <div style="display:flex;align-items:center;color:#3b82f6;font-size:1.2rem;padding:0 6px">→</div>
+      <div style="text-align:center;padding:12px 16px;background:#0d1117;border-radius:8px;min-width:100px;flex-shrink:0">
+        <div style="font-size:1.4rem">📉</div>
+        <div style="font-size:0.72rem;color:#fb923c;margin-top:6px">计算损失<br/>(ŷ-y)²/2</div>
+      </div>
+      <div style="display:flex;align-items:center;color:#3b82f6;font-size:1.2rem;padding:0 6px">→</div>
+      <div style="text-align:center;padding:12px 16px;background:#0d1117;border-radius:8px;min-width:100px;flex-shrink:0">
+        <div style="font-size:1.4rem">🔁</div>
+        <div style="font-size:0.72rem;color:#f472b6;margin-top:6px">反向传播<br/>∂L/∂w,∂b</div>
+      </div>
+      <div style="display:flex;align-items:center;color:#3b82f6;font-size:1.2rem;padding:0 6px">→</div>
+      <div style="text-align:center;padding:12px 16px;background:#0d1117;border-radius:8px;min-width:100px;flex-shrink:0">
+        <div style="font-size:1.4rem">⬆️</div>
+        <div style="font-size:0.72rem;color:#a3e635;margin-top:6px">SGD更新<br/>w,b</div>
+      </div>
+      <div style="display:flex;align-items:center;color:#3b82f6;font-size:1.2rem;padding:0 6px">→</div>
+      <div style="text-align:center;padding:12px 16px;background:#163020;border:1px solid #6ee7b7;border-radius:8px;min-width:100px;flex-shrink:0">
+        <div style="font-size:1.4rem">✅</div>
+        <div style="font-size:0.72rem;color:#6ee7b7;margin-top:6px">w≈[2,−3.4]<br/>b≈4.2</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-size:0.82rem;color:#64748b;line-height:1.8">
+      每个 epoch = 100次迭代（1000样本 / batch_size=10）&nbsp;|&nbsp;
+      总更新次数 = 3 × 100 = <strong style="color:#7dd3fc">300次</strong>&nbsp;|&nbsp;
+      学习率 lr = 0.03
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
