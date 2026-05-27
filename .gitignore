@@ -1,5 +1,8 @@
 # 本地大体积教材，不纳入本仓库
 pytorch/
+
+# Claude Code
+CLAUDE.md
 .vscode/
 
 # Python
