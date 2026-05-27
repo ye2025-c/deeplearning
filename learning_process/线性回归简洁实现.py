@@ -43,8 +43,9 @@ for epoch in range(num_epochs):
         trainer.zero_grad()
         l.backward()
         trainer.step()
-    l = loss(net(features), labels)
-    print(f'epoch {epoch + 1}, loss {l:f}')
+    with torch.no_grad(): #不影响梯度计算，可加可不加（规范还是加上）
+        l = loss(net(features), labels)
+        print(f'epoch {epoch + 1}, loss {l:f}')
 
 #bias和权重的估计误差
 w = net[0].weight.data
