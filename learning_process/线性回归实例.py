@@ -50,7 +50,7 @@ def squared_loss(y_hat,y):
 # 定义优化算法
 '''小批量随机梯度下降'''
 def sgd(params,lr,batch_size):
-    with torch.no_grad():   #不需要计算梯度，所以可以防止发生梯度更新
+    with torch.no_grad():   #不需要存入计算图，所以可以防止发生梯度更新
         for param in params:
             param -= lr*param.grad/batch_size
             param.grad.zero_()
@@ -65,7 +65,6 @@ batch_size = 10
 for epoch in range(num_epochs):
     for X,y in data_iter(batch_size,features,labels):
         l = loss(net(X,w,b),y) #X和y的小批量损失
-        #因为l形状是(batch_size,1)，使用mean()来得到这个小批量的平均损失
         #计算[w,b]的梯度
         l.sum().backward()
         sgd([w,b],lr,batch_size)  #更新参数
