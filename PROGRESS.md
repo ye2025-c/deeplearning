@@ -1,7 +1,7 @@
 # 学习进度
 
 > **当前阶段**：阶段 1 · 预备知识 + 线性模型（同时推进阶段 5 Transformer 项目）  
-> **最后更新**：2026-05-27
+> **最后更新**：2026-05-28
 
 在完成的任务前把 `[ ]` 改成 `[x]`。
 
@@ -29,8 +29,8 @@
 
 ### 线性模型 (`chapter_linear-networks/`)
 
-- [ ] `linear-regression.ipynb`
-- [ ] `linear-regression-scratch.ipynb`
+- [x] `linear-regression.ipynb`
+- [x] `linear-regression-scratch.ipynb`
 - [x] `linear-regression-concise.ipynb`（笔记：`线性回归简洁实现笔记.md`，脚本：`线性回归简洁实现.py`）
 - [x] `learning_process/线性回归实例.py`
 - [x] 笔记：`线性神经网络.md`（开头部分）
