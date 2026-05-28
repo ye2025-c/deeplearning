@@ -15,14 +15,20 @@ deeplearning/
 │
 ├── deeplearning notebook/      # 个人 Markdown 笔记（按章节命名）
 │   ├── 深度学习初步.md
-│   └── 线性神经网络.md
+│   ├── 线性神经网络.md
+│   ├── 查阅文档.md
+│   ├── 分离计算的作用.md
+│   ├── 线性回归实例分析.md
+│   ├── 线性回归掌握计划.md
+│   └── 线性回归简洁实现笔记.md
 │
 ├── learning_process/           # 独立 .py 小实验（验证概念用）
 │   ├── calculus.py
 │   ├── 正态分布.py
 │   ├── 矢量加速.py
+│   ├── Timer.py
 │   ├── 线性回归实例.py
-│   └── Timer.py
+│   └── 线性回归简洁实现.py
 │
 ├── transformer/                # 阶段 5：从零实现 Transformer
 │   └── transformer.py
@@ -67,9 +73,9 @@ deeplearning/
 
 | 任务 | 配套练手 | 笔记 |
 |------|----------|------|
-| 张量操作 `ndarray.ipynb` | — | — |
-| pandas 数据处理 | — | — |
-| 线性代数 | — | `深度学习初步.md` |
+| 张量操作 `ndarray.ipynb` | — | ✓ |
+| pandas 数据处理 | — | ✓ |
+| 线性代数 | — | `深度学习初步.md` ✓|
 | 微积分 `calculus.ipynb` | `learning_process/calculus.py` ✓ | `深度学习初步.md` ✓ |
 | 概率 `probability.ipynb` | `learning_process/正态分布.py` ✓ | — |
 | 自动微分 `autograd.ipynb` | — | `深度学习初步.md` ✓ |
@@ -79,8 +85,8 @@ deeplearning/
 | 任务 | 配套练手 | 笔记 |
 |------|----------|------|
 | 线性回归原理 | `learning_process/线性回归实例.py` ✓ | `线性神经网络.md` ✓ |
-| 线性回归从零实现 | — | — |
-| 线性回归简洁实现 | — | — |
+| 线性回归从零实现 | — | ✓ |
+| 线性回归简洁实现 | — | ✓ |
 | Softmax 回归 | 新建 `learning_process/softmax_scratch.py` | 补充 `线性神经网络.md` |
 
 #### 优化基础 `pytorch/chapter_optimization/`
