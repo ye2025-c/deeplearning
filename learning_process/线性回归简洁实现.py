@@ -40,9 +40,9 @@ num_epochs = 3
 for epoch in range(num_epochs):
     for X, y in data_iter:
         l = loss(net(X), y)
-        trainer.zero_grad()
-        l.backward()
-        trainer.step()
+        trainer.zero_grad() #梯度清零
+        l.backward()        #反向传播计算梯度
+        trainer.step()      #更新参数
     with torch.no_grad(): #不影响梯度计算，可加可不加（规范还是加上）
         l = loss(net(features), labels)
         print(f'epoch {epoch + 1}, loss {l:f}')
@@ -52,3 +52,11 @@ w = net[0].weight.data
 print('w的估计误差: ', true_w - w.reshape(true_w.shape))
 b = net[0].bias.data
 print('b的估计误差: ', true_b - b)
+
+#更新后的权重和偏差可视化
+d2l.set_figsize()
+d2l.plt.scatter(features[:, (1)].detach().numpy(), labels.detach().numpy(), 1)
+x = torch.tensor([-5.0, 5.0])
+y = net[0].weight.data[0, 1] * x + net[0].bias.data
+d2l.plt.plot(x.numpy(), y.numpy())
+d2l.plt.show()

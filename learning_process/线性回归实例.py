@@ -14,8 +14,10 @@ def synthetic_data(w,b,num_examples):
     return X,y.reshape((-1,1))
 
 #设定真实的权重和偏差
-true_w = torch.tensor([2,-3.4])
-true_b = 4.2
+#true_w = torch.tensor([2,-3.4])
+#true_b = 4.2
+true_w = torch.tensor([1.0, 2.0, -1.0, 0.5])
+true_b = 3.0
 
 features,labels = synthetic_data(true_w,true_b,1000)
 
@@ -35,7 +37,8 @@ def data_iter(batch_size,features,labels):
 
 
 # 初始化模型参数
-w = torch.normal(0,0.001,size=(2,1),requires_grad=True)
+#w = torch.normal(0,0.001,size=(2,1),requires_grad=True)
+w = torch.normal(0,0.01,size=(len(true_w),1),requires_grad=True)
 b = torch.zeros(1,requires_grad=True)
 
 
@@ -46,6 +49,9 @@ def linreg(X,w,b):
 # 定义损失函数
 def squared_loss(y_hat,y):
     return (y_hat - y.reshape(y_hat.shape))**2/2
+
+def mae_loss(y_hat,y):
+    return torch.abs(y_hat - y.reshape(y_hat.shape))
 
 # 定义优化算法
 '''小批量随机梯度下降'''
@@ -60,16 +66,17 @@ lr = 0.03
 num_epochs = 3
 net = linreg
 loss = squared_loss
+loss_2 = mae_loss
 batch_size = 10
 
 for epoch in range(num_epochs):
     for X,y in data_iter(batch_size,features,labels):
-        l = loss(net(X,w,b),y) #X和y的小批量损失
+        l = loss_2(net(X,w,b),y) #X和y的小批量损失
         #计算[w,b]的梯度
         l.sum().backward()
         sgd([w,b],lr,batch_size)  #更新参数
     with torch.no_grad():
-        train_l = loss(net(features,w,b),labels)
+        train_l = loss_2(net(features,w,b),labels)
         print(f'epoch {epoch + 1}, loss {float(train_l.mean()):f}')
 
 print(f'w的估计误差: {true_w - w.reshape(true_w.shape)}')
