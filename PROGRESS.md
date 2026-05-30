@@ -21,7 +21,7 @@
 
 - [ ] `ndarray.ipynb`
 - [ ] `pandas.ipynb`
-- [ ] `linear-algebra.ipynb`（遇问题再细读）
+- [x] `linear-algebra.ipynb`（遇问题再细读）
 - [x] `calculus.ipynb` + `learning_process/calculus.py`
 - [x] `probability.ipynb` + `learning_process/正态分布.py`
 - [x] `autograd.ipynb`（笔记：`深度学习初步.md`）
