@@ -30,6 +30,9 @@ deeplearning/
 │   ├── 循环神经网络.md          # 阶段4（骨架）
 │   ├── 现代循环网络.md          # 阶段4（骨架）
 │   ├── 注意力机制.md            # 阶段4（骨架）
+│   ├── NLP预训练.md             # 阶段4 word2vec/BERT（骨架）
+│   ├── NLP应用.md               # 阶段4 情感分析/微调BERT（骨架）
+│   ├── 计算性能.md              # 多GPU/硬件 选读（骨架）
 │   └── Transformer实现.md       # 阶段5（骨架）
 │
 ├── learning_process/           # 独立 .py 小实验（验证概念用）
@@ -150,7 +153,8 @@ deeplearning/
 | `chapter_recurrent-neural-networks/` | RNN、BPTT、语言模型 |
 | `chapter_recurrent-modern/` | LSTM、GRU、seq2seq、束搜索 |
 | `chapter_attention-mechanisms/` | Bahdanau、多头注意力、位置编码 |
-| `chapter_natural-language-processing-*`（选读） | BERT 微调等 |
+| `chapter_natural-language-processing-pretraining/` | word2vec、GloVe、BERT 预训练（笔记 `NLP预训练.md`） |
+| `chapter_natural-language-processing-applications/` | 情感分析、NLI、微调 BERT（笔记 `NLP应用.md`） |
 
 > 完成本阶段后，`transformer/` 的实现会有更深理解，可回头补齐 mask、BLEU 评估。
 

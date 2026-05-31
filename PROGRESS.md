@@ -66,7 +66,8 @@
 - [ ] `chapter_recurrent-neural-networks/`（笔记：`循环神经网络.md` 骨架已搭）
 - [ ] `chapter_recurrent-modern/`（笔记：`现代循环网络.md` 骨架已搭）
 - [ ] `chapter_attention-mechanisms/`（笔记：`注意力机制.md` 骨架已搭）
-- [ ] NLP 应用章节（选读）
+- [ ] `chapter_natural-language-processing-pretraining/`（笔记：`NLP预训练.md` 骨架已搭）
+- [ ] `chapter_natural-language-processing-applications/`（笔记：`NLP应用.md` 骨架已搭）
 
 ---
 
@@ -86,7 +87,7 @@
 
 - [x] `learning_process/Timer.py`
 - [x] `learning_process/矢量加速.py`
-- [ ] `chapter_computational-performance/` 相关章节
+- [ ] `chapter_computational-performance/` 相关章节（笔记：`计算性能.md` 骨架已搭）
 
 ---
 
@@ -122,4 +123,7 @@
 | `deeplearning notebook/循环神经网络.md` | 阶段 4 序列 / RNN / BPTT（骨架） |
 | `deeplearning notebook/现代循环网络.md` | 阶段 4 GRU/LSTM/seq2seq（骨架） |
 | `deeplearning notebook/注意力机制.md` | 阶段 4 注意力 / Transformer（骨架） |
+| `deeplearning notebook/NLP预训练.md` | 阶段 4 word2vec/GloVe/BERT（骨架） |
+| `deeplearning notebook/NLP应用.md` | 阶段 4 情感分析/NLI/微调BERT（骨架） |
+| `deeplearning notebook/计算性能.md` | 计算性能 多GPU/硬件（骨架） |
 | `deeplearning notebook/Transformer实现.md` | 阶段 5 项目（骨架） |
