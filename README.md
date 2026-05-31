@@ -20,7 +20,17 @@ deeplearning/
 │   ├── 分离计算的作用.md
 │   ├── 线性回归实例分析.md
 │   ├── 线性回归掌握计划.md
-│   └── 线性回归简洁实现笔记.md
+│   ├── 线性回归简洁实现笔记.md
+│   ├── 优化算法.md              # 阶段1（骨架）
+│   ├── 多层感知机.md            # 阶段2（骨架）
+│   ├── 深度学习计算.md          # 阶段2（骨架）
+│   ├── 卷积神经网络.md          # 阶段3（骨架）
+│   ├── 现代卷积网络.md          # 阶段3（骨架）
+│   ├── 计算机视觉.md            # 阶段3 选读（骨架）
+│   ├── 循环神经网络.md          # 阶段4（骨架）
+│   ├── 现代循环网络.md          # 阶段4（骨架）
+│   ├── 注意力机制.md            # 阶段4（骨架）
+│   └── Transformer实现.md       # 阶段5（骨架）
 │
 ├── learning_process/           # 独立 .py 小实验（验证概念用）
 │   ├── calculus.py
@@ -28,7 +38,14 @@ deeplearning/
 │   ├── 矢量加速.py
 │   ├── Timer.py
 │   ├── 线性回归实例.py
-│   └── 线性回归简洁实现.py
+│   ├── 线性回归简洁实现.py
+│   ├── softmax_scratch.py
+│   ├── optimizer_compare.py     # 阶段1 优化器对比（骨架）
+│   ├── mlp_scratch.py           # 阶段2 MLP 从零（骨架）
+│   ├── lenet_scratch.py         # 阶段3 LeNet（骨架）
+│   ├── resnet_scratch.py        # 阶段3 ResNet（骨架）
+│   ├── rnn_scratch.py           # 阶段4 RNN 从零（骨架）
+│   └── seq2seq.py               # 阶段4 seq2seq+BLEU（骨架）
 │
 ├── transformer/                # 阶段 5：从零实现 Transformer
 │   └── transformer.py

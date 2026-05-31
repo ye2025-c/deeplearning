@@ -40,7 +40,7 @@
 
 - [ ] `optimization-intro.ipynb`
 - [ ] `gd.ipynb` / `sgd.ipynb`
-- [ ] 笔记：`优化算法.md`（待建）
+- [ ] 笔记：`优化算法.md`（骨架已搭，待填）
 
 ---
 
@@ -48,22 +48,24 @@
 
 - [ ] `chapter_multilayer-perceptrons/` 全部 notebook
 - [ ] `learning_process/` 中添加 MLP 从零实现脚本
+- [ ] 笔记：`多层感知机.md`（骨架已搭，待填）
+- [ ] 笔记：`深度学习计算.md`（骨架已搭，待填）
 
 ---
 
 ## 阶段 3 · 卷积与视觉
 
-- [ ] `chapter_convolutional-neural-networks/`
-- [ ] `chapter_convolutional-modern/`
-- [ ] `chapter_computer-vision/`（选读章节自行标注）
+- [ ] `chapter_convolutional-neural-networks/`（笔记：`卷积神经网络.md` 骨架已搭）
+- [ ] `chapter_convolutional-modern/`（笔记：`现代卷积网络.md` 骨架已搭）
+- [ ] `chapter_computer-vision/`（选读，笔记：`计算机视觉.md` 骨架已搭）
 
 ---
 
 ## 阶段 4 · 序列与 NLP
 
-- [ ] `chapter_recurrent-neural-networks/`
-- [ ] `chapter_recurrent-modern/`
-- [ ] `chapter_attention-mechanisms/`
+- [ ] `chapter_recurrent-neural-networks/`（笔记：`循环神经网络.md` 骨架已搭）
+- [ ] `chapter_recurrent-modern/`（笔记：`现代循环网络.md` 骨架已搭）
+- [ ] `chapter_attention-mechanisms/`（笔记：`注意力机制.md` 骨架已搭）
 - [ ] NLP 应用章节（选读）
 
 ---
@@ -75,7 +77,7 @@
 - [x] 多头注意力 `self.d_model` 修复，训练可跑通
 - [ ] 训练时使用 `src_mask` / `tgt_mask`（因果掩码）
 - [ ] 保存与加载 checkpoint
-- [ ] 笔记：`deeplearning notebook/Transformer实现.md`（待建）
+- [ ] 笔记：`deeplearning notebook/Transformer实现.md`（骨架已搭，待填 mask/checkpoint/BLEU）
 - [ ] 对比 D2L `chapter_attention-mechanisms/` 与自实现的差异
 
 ---
@@ -111,5 +113,13 @@
 | `deeplearning notebook/线性回归实例分析.md` | 线性回归原理分析 |
 | `deeplearning notebook/线性回归掌握计划.md` | 线性回归学习计划 |
 | `deeplearning notebook/线性回归简洁实现笔记.md` | linear-regression-concise |
-| （待建）`优化算法.md` | 阶段 1 优化章节 |
-| （待建）`Transformer实现.md` | 阶段 5 项目 |
+| `deeplearning notebook/优化算法.md` | 阶段 1 优化章节（骨架） |
+| `deeplearning notebook/多层感知机.md` | 阶段 2 MLP / 正则化（骨架） |
+| `deeplearning notebook/深度学习计算.md` | 阶段 2 层与块 / 参数 / GPU（骨架） |
+| `deeplearning notebook/卷积神经网络.md` | 阶段 3 CNN 基础 / LeNet（骨架） |
+| `deeplearning notebook/现代卷积网络.md` | 阶段 3 AlexNet~ResNet（骨架） |
+| `deeplearning notebook/计算机视觉.md` | 阶段 3 增广 / 微调 / 检测（骨架） |
+| `deeplearning notebook/循环神经网络.md` | 阶段 4 序列 / RNN / BPTT（骨架） |
+| `deeplearning notebook/现代循环网络.md` | 阶段 4 GRU/LSTM/seq2seq（骨架） |
+| `deeplearning notebook/注意力机制.md` | 阶段 4 注意力 / Transformer（骨架） |
+| `deeplearning notebook/Transformer实现.md` | 阶段 5 项目（骨架） |
